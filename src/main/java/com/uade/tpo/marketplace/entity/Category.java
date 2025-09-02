@@ -17,14 +17,17 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "categories", indexes=@Index(name="ix_categoria_nombre", columnList="nombre", unique=true))
+@Table(
+    name = "categories",
+    indexes = @Index(name = "ix_categoria_name", columnList = "name")
+)
 public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false, unique = true)
     private String name;
 
     @OneToMany(mappedBy = "category")

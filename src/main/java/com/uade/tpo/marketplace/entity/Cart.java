@@ -1,18 +1,18 @@
 package com.uade.tpo.marketplace.entity;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.*;
 
 @Data
@@ -25,16 +25,14 @@ public class Cart {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
 
-    @CreationTimestamp
+    @UpdateTimestamp
     @Column(nullable = false)
     private OffsetDateTime dateTime;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @OneToMany(mappedBy = "cart")
-    @Builder.Default
-    private List<ItemCart> items = new ArrayList<>();
-
+    private List<ItemCart> items ;
 }

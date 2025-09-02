@@ -3,6 +3,7 @@ package com.uade.tpo.marketplace.controllers.user;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +12,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.uade.tpo.marketplace.service.UserService;
+import com.uade.tpo.marketplace.entity.User;
+import com.uade.tpo.marketplace.entity.enums.Rol;
+import com.uade.tpo.marketplace.service.user.UserService;
+import org.springframework.web.bind.annotation.PostMapping;
+
 
 @Controller
 @RequestMapping("users")
@@ -22,20 +27,34 @@ public class UsersController {
 
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers() {
-        List<UserResponse> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
-        UserResponse user = userService.getUserById(id);
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(userService.getUserById(id));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserResponse> getUserMe(@AuthenticationPrincipal(expression = "email") String email) {
+        return ResponseEntity.ok(userService.getUserMe(email));
+    }
+
+    @PostMapping
+    public ResponseEntity<String> createUser(@RequestBody UserRequest userRequest) {
+        userService.createUser(userRequest);
+        return ResponseEntity.ok("User created");
+    }
+    
+
+    @PutMapping("/me")
+    public ResponseEntity<UserResponse> updateUserMe(@AuthenticationPrincipal User user, @RequestBody UserRequest userRequest) {
+        return ResponseEntity.ok(userService.updateUserMe(user, userRequest));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @RequestBody UserRequest userRequest) {
-        UserResponse user = userService.updateUser(id, userRequest.getName(), userRequest.getEmail(), userRequest.getPassword(), userRequest.getRol());
-        return ResponseEntity.ok(user);
+    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @RequestBody Rol rol) {
+        return ResponseEntity.ok(userService.updateUser(id, rol));
     }
 
     @DeleteMapping("/{id}")

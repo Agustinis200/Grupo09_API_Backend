@@ -5,11 +5,12 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.uade.tpo.marketplace.entity.Product;
-import com.uade.tpo.marketplace.service.ProductService;
+import com.uade.tpo.marketplace.entity.User;
+import com.uade.tpo.marketplace.service.product.ProductService;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,32 +29,30 @@ public class ProductsController {
     private ProductService productService;
 
     @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts() {
-        List<Product> products = productService.getAllProducts();
-        return ResponseEntity.ok(products);
+    public ResponseEntity<List<ProductResponse>> getAllProducts() {
+        return ResponseEntity.ok(productService.getAllProducts());
     }
 
     @GetMapping("{Productid}")
-    public ResponseEntity<Product> getProductById(@PathVariable Long Productid) {
-        Product product = productService.getProductById(Productid);
-        return ResponseEntity.ok(product);
+    public ResponseEntity<ProductResponse> getProductById(@PathVariable Long Productid) {
+        return ResponseEntity.ok(productService.getProductById(Productid));
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody ProductRequest productRequest) {
-        Product createdProduct = productService.createProduct(productRequest.getName(), productRequest.getDescription(), productRequest.getPrice(), productRequest.getImageUrl(), productRequest.getCategory().getName());
+    public ResponseEntity<ProductResponse> createProduct(@RequestBody ProductRequest productRequest,@AuthenticationPrincipal User user) {
+        ProductResponse createdProduct = productService.createProduct(productRequest, user);
         return ResponseEntity.created(URI.create("/products/" + createdProduct.getId())).body(createdProduct);
     }
 
-    @PutMapping("{Productid}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long Productid, @RequestBody ProductRequest productRequest) {
-        Product updatedProduct = productService.updateProduct(Productid, productRequest.getName(), productRequest.getDescription(), productRequest.getPrice(), productRequest.getImageUrl());
+    @PutMapping("{productId}")
+    public ResponseEntity<ProductResponse> updateProduct(@RequestBody ProductRequest productRequest,@PathVariable Long productId) {
+        ProductResponse updatedProduct = productService.updateProduct(productRequest, productId);
         return ResponseEntity.ok(updatedProduct);
     }
 
-    @DeleteMapping("{Productid}")
-    public void deleteProduct(@PathVariable Long Productid) {
-        productService.deleteProduct(Productid);
+    @DeleteMapping("{productId}")
+    public void deleteProduct(@PathVariable Long productId) {
+        productService.deleteProduct(productId);
     }
 
 }

@@ -1,5 +1,6 @@
-package com.uade.tpo.marketplace.service;
+package com.uade.tpo.marketplace.service.auth;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,10 +22,20 @@ public class AuthenticationService {
         private final PasswordEncoder passwordEncoder;
         private final JwtService jwtService;
         private final AuthenticationManager authenticationManager;
+        @Autowired
+        private UserRepository userRepository;
 
         public AuthenticationResponse register(RegisterRequest request) {
+                userRepository.findByEmail(request.getEmail()).ifPresent(user -> {
+                        throw new IllegalArgumentException("Email already in use");
+                });
+
+                userRepository.findByRol(request.getRol()).ifPresent(user -> {
+                        throw new IllegalArgumentException("Role already in use");
+                });
+
                 var user = User.builder()
-                                .nombreUsuario(request.getNombreUsuario())
+                                .name(request.getName())
                                 .email(request.getEmail())
                                 .password(passwordEncoder.encode(request.getPassword()))
                                 .rol(request.getRol())

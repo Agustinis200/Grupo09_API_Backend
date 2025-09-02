@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -35,9 +36,6 @@ public class Product {
     @Column(nullable = false)
     private Double price;
 
-    @Column(nullable = false)
-    private String imageUrl;
-
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
@@ -46,4 +44,6 @@ public class Product {
     @JoinColumn(name = "vendedor_id", nullable = false)
     private User seller;
 
+    @OneToOne(mappedBy = "product")
+    private Image image;
 }

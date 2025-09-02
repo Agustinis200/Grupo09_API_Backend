@@ -1,6 +1,5 @@
 package com.uade.tpo.marketplace.entity;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -19,6 +18,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -42,7 +42,7 @@ public class User implements UserDetails {
 
     @Column(nullable=false)
     @NotBlank
-    private String nombreUsuario;
+    private String name;
 
     @Column(nullable=false, unique=true) 
     @Email 
@@ -57,13 +57,15 @@ public class User implements UserDetails {
     @Column(nullable=false) 
     private Rol rol;
 
+    @OneToOne(mappedBy = "user")
+    private Cart carts ;
+
     @OneToMany(mappedBy = "user")
-    @Builder.Default        
-    private List<Cart> carts = new ArrayList<>();
+    private List<Order> orders ;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(rol.name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_"+rol.name()));
     }
 
     @Override

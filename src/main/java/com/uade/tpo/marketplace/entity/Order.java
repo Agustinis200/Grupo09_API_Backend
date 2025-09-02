@@ -1,7 +1,6 @@
 package com.uade.tpo.marketplace.entity;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -46,8 +45,7 @@ public class Order {
     private User user;
 
     @OneToMany(mappedBy = "order")
-    @Builder.Default
-    private List<ItemOrder> items = new ArrayList<>();
+    private List<ItemOrder> items ;
 
     @Column
     private Double totalPrice;
