@@ -73,7 +73,7 @@ public class ConfiguracionProbador {
                     Part.fromText(prompt)
             );
 
-            GenerateContentResponse resp = client.models.generateContent("gemini-2.5-flash-image-preview", editReq, cfg);
+            GenerateContentResponse resp = client.models.generateContent("gemini-2.0-flash-preview-image-generation", editReq, cfg);
             
             for (Part p : resp.parts()) {
                 p.inlineData().ifPresent(blob -> {
@@ -95,7 +95,6 @@ public class ConfiguracionProbador {
         }
 
         if (imagenesResultantes.isEmpty()) {
-            System.out.println("El modelo no devolvió imágenes, intentando enfoque alternativo...");
             return intentarEnfoqueAlternativo(prendaBlob, usuarioBlob);
         }
         

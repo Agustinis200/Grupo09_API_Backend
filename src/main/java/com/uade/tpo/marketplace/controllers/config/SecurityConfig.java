@@ -28,19 +28,20 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(req -> req
             .requestMatchers("/auth/**").permitAll()
-            .requestMatchers(HttpMethod.GET, "/products").permitAll()
+            .requestMatchers(HttpMethod.GET, "/products","/categories").permitAll()
 
             .requestMatchers(HttpMethod.GET, "/categories/**", "/images/**", "/products/**")
                 .hasAnyRole("USER","SELLER","ADMIN")
 
             .requestMatchers("/carts/**").hasRole("USER")
-            .requestMatchers("/orders/user/**").hasRole("USER")
+            .requestMatchers("/orders/me/**").hasRole("USER")
 
             .requestMatchers(HttpMethod.POST,   "/products/**","/images/**","/categories/**").hasRole("SELLER")
             .requestMatchers(HttpMethod.PUT,    "/products/**","/images/**","/categories/**").hasRole("SELLER")
             .requestMatchers(HttpMethod.DELETE, "/products/**","/images/**","/categories/**").hasRole("SELLER")
             .requestMatchers(HttpMethod.GET, "/users/me").hasRole("USER")
             .requestMatchers(HttpMethod.PUT, "/users/me").hasRole("USER")
+            .requestMatchers(HttpMethod.POST, "/probador/**").hasRole("USER")
             .requestMatchers(HttpMethod.GET, "/users/**","/orders/admin/**").hasRole("ADMIN")
             .requestMatchers(HttpMethod.PUT, "/users/**","/products/**","/categories/**").hasRole("ADMIN")
 

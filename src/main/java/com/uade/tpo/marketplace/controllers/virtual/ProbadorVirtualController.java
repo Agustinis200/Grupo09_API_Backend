@@ -23,9 +23,9 @@ public class ProbadorVirtualController {
     private ProbadorVirtualService probadorVirtualService;
 
     @PostMapping("/{productoId}")
-    public ResponseEntity<?> probarPrendaBase64(
+    public ResponseEntity<?> probarPrenda(
             @PathVariable Long productoId,
-            @RequestPart("imagen") MultipartFile imagenUsuario) {
+            @RequestPart("user") MultipartFile imagenUsuario) {
         
         try {
             Map<String, Object> resultado = probadorVirtualService.probarPrendaVirtual(productoId, imagenUsuario);

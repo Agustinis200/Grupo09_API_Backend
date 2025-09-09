@@ -41,12 +41,12 @@ public class OrdersController {
         return ResponseEntity.ok(orderService.getOrderById(userId, orderId));
     }
 
-    @GetMapping("/user/{orderId}")
+    @GetMapping("/me/{orderId}")
     public ResponseEntity<OrderResponse> getOrderById(@AuthenticationPrincipal User user, @PathVariable Long orderId) {
         return ResponseEntity.ok(orderService.getOrderById(user.getId(), orderId));
     }
 
-    @GetMapping("/user")
+    @GetMapping("/me")
     public ResponseEntity<List<OrderResponse>> getOrdersByUserId(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(orderService.getOrdersByUserId(user.getId()));
     }
@@ -58,7 +58,7 @@ public class OrdersController {
     }
     
 
-    @PutMapping("/user/{orderId}")
+    @PutMapping("/me/{orderId}")
     public ResponseEntity<OrderResponse> updateOrder(@RequestBody OrderRequest orderRequest, @AuthenticationPrincipal(expression = "id") Long userId, @PathVariable Long orderId) {
         return ResponseEntity.ok(orderService.updateOrder(orderRequest, userId, orderId));
     }
