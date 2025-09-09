@@ -1,13 +1,15 @@
 package com.uade.tpo.marketplace.service.product;
 
-import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.uade.tpo.marketplace.controllers.product.ProductRequest;
 import com.uade.tpo.marketplace.controllers.product.ProductResponse;
 import com.uade.tpo.marketplace.entity.User;
 
 public interface ProductService {
-    List<ProductResponse> getAllProducts();
+    Page<ProductResponse> getAllProducts(Pageable pageable);
     ProductResponse getProductById(Long Productid);
     ProductResponse createProduct(ProductRequest productRequest, User user);
     ProductResponse updateProduct(ProductRequest productRequest, Long productId);

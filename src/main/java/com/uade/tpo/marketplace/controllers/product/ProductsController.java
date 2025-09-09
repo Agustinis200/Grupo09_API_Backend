@@ -1,12 +1,13 @@
 package com.uade.tpo.marketplace.controllers.product;
 
 import java.net.URI;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.uade.tpo.marketplace.entity.User;
@@ -29,8 +30,11 @@ public class ProductsController {
     private ProductService productService;
 
     @GetMapping
-    public ResponseEntity<List<ProductResponse>> getAllProducts() {
-        return ResponseEntity.ok(productService.getAllProducts());
+    public ResponseEntity<Page<ProductResponse>> getAllProducts(@RequestParam(required = false) Integer page,@RequestParam(required = false) Integer size) {
+        if (page == null && size == null) {
+            return ResponseEntity.ok(productService.getAllProducts(PageRequest.of(0, 10)));   
+        }
+        return ResponseEntity.ok(productService.getAllProducts(PageRequest.of(page, size)));
     }
 
     @GetMapping("{Productid}")

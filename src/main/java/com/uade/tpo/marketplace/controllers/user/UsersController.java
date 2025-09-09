@@ -1,7 +1,8 @@
 package com.uade.tpo.marketplace.controllers.user;
 
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.uade.tpo.marketplace.entity.User;
 import com.uade.tpo.marketplace.entity.enums.Rol;
@@ -26,8 +28,12 @@ public class UsersController {
     private UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<UserResponse>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<Page<UserResponse>> getAllUsers( @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size) {
+                if (page == null && size == null) {
+                    return ResponseEntity.ok(userService.getAllUsers(PageRequest.of(0, 10)));   
+                }
+        return ResponseEntity.ok(userService.getAllUsers(PageRequest.of(page == null ? 0 : page, size == null ? Integer.MAX_VALUE : size)));
     }
 
     @GetMapping("/{id}")

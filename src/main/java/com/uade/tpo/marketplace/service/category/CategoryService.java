@@ -1,21 +1,21 @@
 package com.uade.tpo.marketplace.service.category;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.uade.tpo.marketplace.controllers.category.CategoryResponse;
 import com.uade.tpo.marketplace.entity.Category;
-import com.uade.tpo.marketplace.exception.CategoryDuplicateException;
-import com.uade.tpo.marketplace.exception.CategoryNotFoundException;
+
 
 public interface CategoryService {
-    public List<CategoryResponse> getAllCategories();
+    public Page<CategoryResponse> getAllCategories(Pageable pageable);
 
-    public CategoryResponse getCategoryById(Long categoryById) throws CategoryNotFoundException ;
+    public CategoryResponse getCategoryById(Long categoryById);
 
-    public CategoryResponse createCategory(String name) throws CategoryDuplicateException;
+    public CategoryResponse createCategory(String name) ;
 
-    public CategoryResponse updateCategory(Long categoryById, String name) throws CategoryNotFoundException;
+    public CategoryResponse updateCategory(Long categoryById, String name);
 
-    public void deleteCategory(Long categoryById) throws CategoryNotFoundException;
+    public void deleteCategory(Long categoryById);
     Category createCategoryProduct(String name) ;
 }

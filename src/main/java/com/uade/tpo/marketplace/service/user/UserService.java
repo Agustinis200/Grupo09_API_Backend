@@ -1,6 +1,7 @@
 package com.uade.tpo.marketplace.service.user;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.uade.tpo.marketplace.controllers.user.UserRequest;
 import com.uade.tpo.marketplace.controllers.user.UserResponse;
@@ -9,7 +10,7 @@ import com.uade.tpo.marketplace.entity.enums.Rol;
 
 public interface UserService {
 
-    public List<UserResponse> getAllUsers();
+    public Page<UserResponse> getAllUsers(Pageable pageable);
 
     public UserResponse createUser(UserRequest userRequest);
 

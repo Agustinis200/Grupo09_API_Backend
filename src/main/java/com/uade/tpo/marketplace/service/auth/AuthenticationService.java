@@ -1,16 +1,19 @@
 package com.uade.tpo.marketplace.service.auth;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.uade.tpo.marketplace.controllers.auth.AuthenticationRequest;
 import com.uade.tpo.marketplace.controllers.auth.AuthenticationResponse;
 import com.uade.tpo.marketplace.controllers.auth.RegisterRequest;
 import com.uade.tpo.marketplace.controllers.config.JwtService;
 import com.uade.tpo.marketplace.entity.User;
+import com.uade.tpo.marketplace.entity.enums.Rol;
+import com.uade.tpo.marketplace.exception.user.UserMailDuplicateException;
+import com.uade.tpo.marketplace.exception.user.UserRolException;
 import com.uade.tpo.marketplace.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -22,17 +25,17 @@ public class AuthenticationService {
         private final PasswordEncoder passwordEncoder;
         private final JwtService jwtService;
         private final AuthenticationManager authenticationManager;
-        @Autowired
-        private UserRepository userRepository;
 
+        @Transactional
         public AuthenticationResponse register(RegisterRequest request) {
-                userRepository.findByEmail(request.getEmail()).ifPresent(user -> {
-                        throw new IllegalArgumentException("Email already in use");
-                });
 
-                userRepository.findByRol(request.getRol()).ifPresent(user -> {
-                        throw new IllegalArgumentException("Role already in use");
-                });
+                if (repository.findByEmail(request.getEmail()).isPresent()) {
+                        throw new UserMailDuplicateException("Email already in use");
+                }
+
+                if (!repository.findByRol(Rol.SELLER).isEmpty()) {
+                        throw new UserRolException("Invalid role");
+                }
 
                 var user = User.builder()
                                 .name(request.getName())
@@ -48,6 +51,7 @@ public class AuthenticationService {
                                 .build();
         }
 
+        @Transactional(readOnly = true)
         public AuthenticationResponse authenticate(AuthenticationRequest request) {
                 authenticationManager.authenticate(
                                 new UsernamePasswordAuthenticationToken(
