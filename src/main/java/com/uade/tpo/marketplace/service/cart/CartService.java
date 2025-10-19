@@ -13,4 +13,6 @@ public interface CartService {
     public CartResponse updateCart(ItemCartRequest itemCartRequest, long userId);
 
     public void clearCart(long userId);
+
+    public void removeItemFromCart(long userId, long productId);
 }

@@ -33,8 +33,9 @@ public class AuthenticationService {
                         throw new UserMailDuplicateException("Email already in use");
                 }
 
-                if (!repository.findByRol(Rol.SELLER).isEmpty()) {
-                        throw new UserRolException("Invalid role");
+                // Validar que solo pueda haber un SELLER
+                if (request.getRol() == Rol.SELLER && !repository.findByRol(Rol.SELLER).isEmpty()) {
+                        throw new UserRolException("Ya existe un vendedor registrado. Solo puede haber un SELLER.");
                 }
 
                 var user = User.builder()

@@ -5,6 +5,9 @@ import org.springframework.stereotype.Component;
 import com.uade.tpo.marketplace.controllers.product.ProductRequest;
 import com.uade.tpo.marketplace.controllers.product.ProductResponse;
 import com.uade.tpo.marketplace.entity.Product;
+
+import java.sql.Blob;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,6 +21,7 @@ public class ProductMapper {
         product.setName(req.getName());
         product.setDescription(req.getDescription());
         product.setPrice(req.getPrice());
+        product.setDiscount(req.getDiscount() != null ? req.getDiscount() : 1.0);
         product.setStock(req.getStock());
         return product;
     }
@@ -25,15 +29,30 @@ public class ProductMapper {
     public ProductResponse toResponse(Product product) {
         if (product == null) return null;
         
+        String imageFileBase64 = null;
+        if (product.getImage() != null) {
+            try {
+                Blob blob = product.getImage().getImage();
+                if (blob != null) {
+                    byte[] bytes = blob.getBytes(1, (int) blob.length());
+                    imageFileBase64 = Base64.getEncoder().encodeToString(bytes);
+                }
+            } catch (Exception e) {
+                // En caso de error al leer la imagen, dejar como null
+                imageFileBase64 = null;
+            }
+        }
+        
         return ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
                 .description(product.getDescription())
                 .price(product.getPrice())
+                .discount(product.getDiscount() != null ? product.getDiscount() : 1.0)
                 .stock(product.getStock())
                 .category(product.getCategory() != null ? product.getCategory().getName() : null)
                 .seller(product.getSeller() != null ? product.getSeller().getUsername() : null)
-                .imageUrl(product.getImage() != null ? "http://localhost:8080/images?id=" + product.getImage().getId() : null)
+                .imageFile(imageFileBase64)
                 .build();
     }
 
@@ -43,6 +62,7 @@ public class ProductMapper {
         if (req.getName() != null) entity.setName(req.getName());
         if (req.getDescription() != null) entity.setDescription(req.getDescription());
         if (req.getPrice() != null) entity.setPrice(req.getPrice());
+        if (req.getDiscount() != null) entity.setDiscount(req.getDiscount());
         if (req.getStock() > 0) entity.setStock(req.getStock());
     }
     

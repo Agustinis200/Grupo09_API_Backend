@@ -8,6 +8,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
@@ -46,4 +48,10 @@ public class Product {
 
     @OneToOne(mappedBy = "product")
     private Image image;
+
+    @Column(nullable = false, columnDefinition = "double default 1.0")
+    @DecimalMin(value = "0.0", inclusive = true, message = "El descuento debe ser mayor o igual a 0")
+    @DecimalMax(value = "1.0", inclusive = true, message = "El descuento debe ser menor o igual a 1")
+    @Builder.Default
+    private Double discount = 1.0; // Multiplicador de precio (1.0 = sin descuento, 0.5 = 50% descuento)
 }

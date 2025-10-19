@@ -23,4 +23,6 @@ public interface UserService {
     public UserResponse getUserMe(String email);
 
     public void deleteUser(Long id);
+
+    public boolean validatePassword(User user, String password);
 }

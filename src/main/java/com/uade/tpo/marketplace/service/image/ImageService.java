@@ -15,4 +15,7 @@ public interface ImageService {
     public Image create(AddFileRequest image) throws IOException, SerialException, SQLException;
 
     public Image viewById(long id);
+
+    public void delete(long id);
+
 }

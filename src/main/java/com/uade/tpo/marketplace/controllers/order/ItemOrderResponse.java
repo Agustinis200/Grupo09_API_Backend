@@ -13,4 +13,7 @@ public class ItemOrderResponse {
     private long id;
     private int count;
     private String productName;
+    private Double productPrice;
+    private Double productDiscount;
+    private Double subtotal; // Precio total del item (precio * discount * cantidad)
 }

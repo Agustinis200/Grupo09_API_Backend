@@ -10,6 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ItemCartResponse {
+    private Long productId;
     private String productName;
+    private double productPrice;
+    private double productDiscount;
+    private String productImage;
     private int quantity;
 }

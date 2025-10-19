@@ -13,5 +13,6 @@ public class ProductResponse {
     private String category;
     private Integer stock;
     private String seller;
-    private String imageUrl;
+    private Double discount;
+    private String imageFile;
 }

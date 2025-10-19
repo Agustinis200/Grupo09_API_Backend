@@ -37,15 +37,12 @@ public class CartServiceImp implements CartService {
     private ProductRepository productRepository;
 
     @Autowired
-    private CartPriceCalculator cartPriceCalculator;
-
-    @Autowired
     private CartMapper cartMapper;
 
     @Transactional(readOnly = true)
     public CartResponse viewCart(long userId) {
         Optional<Cart> cart = cartRepository.findByUserId(userId);
-        return cart.map(c -> cartMapper.toResponse(c, cartPriceCalculator)).orElseGet(CartResponse::new);
+        return cart.map(cartMapper::toResponse).orElseGet(CartResponse::new);
     }
 
     @Transactional
@@ -139,7 +136,7 @@ public class CartServiceImp implements CartService {
         // Actualizar la fecha del carrito
         touch(cart);
         
-        return cartMapper.toResponse(cart, cartPriceCalculator);
+        return cartMapper.toResponse(cart);
     }
 
 
@@ -156,6 +153,29 @@ public class CartServiceImp implements CartService {
         
         // Actualizar la fecha del carrito
         touch(cartOpt.get());
+    }
+
+    @Transactional
+    public void removeItemFromCart(long userId, long productId) {
+        // Buscar el carrito del usuario
+        Optional<Cart> cartOpt = cartRepository.findByUserId(userId);
+        if (cartOpt.isEmpty()) {
+            throw new CartNotFoundException("No se encontró el carrito para el usuario con ID: " + userId);
+        }
+        
+        Cart cart = cartOpt.get();
+        
+        // Buscar el item en el carrito
+        Optional<ItemCart> itemCartOpt = itemCartRepository.findByCartIdAndProductId(cart.getId(), productId);
+        if (itemCartOpt.isEmpty()) {
+            throw new ItemNotFoundInCartException("Producto con ID: " + productId + " no encontrado en el carrito");
+        }
+        
+        // Eliminar el item del carrito
+        itemCartRepository.delete(itemCartOpt.get());
+        
+        // Actualizar la fecha del carrito
+        touch(cart);
     }
 
     private void touch(Cart cart) {

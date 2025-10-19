@@ -46,7 +46,7 @@ public class OrderServiceImp implements OrderService {
     @Override
     @Transactional(readOnly = true)
     public List<OrderResponse> getAllOrders() {
-        return orderRepository.findAll().stream()
+        return orderRepository.findAllOrderByDateTimeDesc().stream()
                 .map(orderMapper::toResponse)
                 .collect(Collectors.toList());
     }

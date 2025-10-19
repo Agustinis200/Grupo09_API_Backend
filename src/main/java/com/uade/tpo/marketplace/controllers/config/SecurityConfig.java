@@ -26,12 +26,20 @@ public class SecurityConfig {
 public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
         .csrf(AbstractHttpConfigurer::disable)
+        .cors(cors -> cors.configurationSource(request -> {
+            var corsConfig = new org.springframework.web.cors.CorsConfiguration();
+            corsConfig.setAllowedOrigins(java.util.List.of("http://localhost:5174"));
+            corsConfig.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+            corsConfig.setAllowedHeaders(java.util.List.of("*"));
+            corsConfig.setAllowCredentials(true);
+            return corsConfig;
+        }))
         .authorizeHttpRequests(req -> req
             .requestMatchers("/auth/**").permitAll()
             .requestMatchers(HttpMethod.GET, "/products","/categories").permitAll()
 
-            .requestMatchers(HttpMethod.GET, "/categories/**", "/images/**", "/products/**")
-                .hasAnyRole("USER","SELLER","ADMIN")
+            .requestMatchers(HttpMethod.GET, "/categories/**", "/images/**", "/products/**").permitAll()
+            .requestMatchers(HttpMethod.GET, "/users/me").permitAll()
 
             .requestMatchers("/carts/**").hasRole("USER")
             .requestMatchers("/orders/me/**").hasRole("USER")
@@ -39,8 +47,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
             .requestMatchers(HttpMethod.POST,   "/products/**","/images/**","/categories/**").hasRole("SELLER")
             .requestMatchers(HttpMethod.PUT,    "/products/**","/images/**","/categories/**").hasRole("SELLER")
             .requestMatchers(HttpMethod.DELETE, "/products/**","/images/**","/categories/**").hasRole("SELLER")
-            .requestMatchers(HttpMethod.GET, "/users/me").hasRole("USER")
-            .requestMatchers(HttpMethod.PUT, "/users/me").hasRole("USER")
+            .requestMatchers(HttpMethod.PUT, "/users/me").hasAnyRole("USER", "SELLER", "ADMIN")
             .requestMatchers(HttpMethod.POST, "/probador/**").hasRole("USER")
             .requestMatchers(HttpMethod.GET, "/users/**","/orders/admin/**").hasRole("ADMIN")
             .requestMatchers(HttpMethod.PUT, "/users/**","/products/**","/categories/**").hasRole("ADMIN")

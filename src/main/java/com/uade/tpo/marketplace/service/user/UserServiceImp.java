@@ -3,6 +3,7 @@ package com.uade.tpo.marketplace.service.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.uade.tpo.marketplace.controllers.user.UserRequest;
@@ -22,6 +23,9 @@ public class UserServiceImp  implements UserService{
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Transactional(readOnly = true)
     public Page<UserResponse> getAllUsers(Pageable pageable) {
         return userRepository.findAll(pageable).map(userMapper::toResponse);
@@ -39,6 +43,10 @@ public class UserServiceImp  implements UserService{
 
     @Transactional
     public UserResponse updateUserMe(User user, UserRequest userRequest) {
+        // Si se está actualizando la contraseña, encriptarla
+        if (userRequest.getPassword() != null && !userRequest.getPassword().isEmpty()) {
+            userRequest.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+        }
         userMapper.updateEntityMe(userRequest, user);
         return userMapper.toResponse(userRepository.save(user));
     }
@@ -63,6 +71,11 @@ public class UserServiceImp  implements UserService{
         User user = userMapper.toEntity(userRequest);
         userRepository.save(user);
         return userMapper.toResponse(user);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean validatePassword(User user, String password) {
+        return passwordEncoder.matches(password, user.getPassword());
     }
 
 }

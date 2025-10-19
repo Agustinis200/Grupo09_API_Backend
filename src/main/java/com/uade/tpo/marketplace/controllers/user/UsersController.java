@@ -3,6 +3,7 @@ package com.uade.tpo.marketplace.controllers.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -67,5 +68,20 @@ public class UsersController {
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/validate-password")
+    public ResponseEntity<PasswordValidationResponse> validatePassword(
+            @AuthenticationPrincipal User user,
+            @RequestBody PasswordValidationRequest request) {
+        
+        boolean isValid = userService.validatePassword(user, request.getPassword());
+        
+        PasswordValidationResponse response = PasswordValidationResponse.builder()
+                .valid(isValid)
+                .message(isValid ? "Contraseña válida" : "Contraseña incorrecta")
+                .build();
+        
+        return ResponseEntity.status(isValid ? HttpStatus.OK : HttpStatus.UNAUTHORIZED).body(response);
     }
 }

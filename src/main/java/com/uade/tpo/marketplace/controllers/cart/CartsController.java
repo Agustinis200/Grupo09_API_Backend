@@ -11,6 +11,7 @@ import com.uade.tpo.marketplace.service.cart.CartService;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,6 +38,12 @@ public class CartsController {
         return ResponseEntity.ok(cartService.updateCart(itemCartRequest, user.getId()));
     }
     
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<Void> removeItemFromCart(@PathVariable Long productId, @AuthenticationPrincipal User user) {
+        cartService.removeItemFromCart(user.getId(), productId);
+        return ResponseEntity.ok().build();
+    }
+
     @DeleteMapping()
     public ResponseEntity<Void> clearCart(@AuthenticationPrincipal User user) {
         cartService.clearCart(user.getId());
@@ -44,4 +51,3 @@ public class CartsController {
     }
 
 }
-    
