@@ -9,7 +9,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
+import java.util.List;
+import org.springframework.web.cors.CorsConfiguration;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 import lombok.RequiredArgsConstructor;
@@ -27,10 +28,10 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
     http
         .csrf(AbstractHttpConfigurer::disable)
         .cors(cors -> cors.configurationSource(request -> {
-            var corsConfig = new org.springframework.web.cors.CorsConfiguration();
-            corsConfig.setAllowedOrigins(java.util.List.of("http://localhost:5174"));
-            corsConfig.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-            corsConfig.setAllowedHeaders(java.util.List.of("*"));
+            var corsConfig = new CorsConfiguration();
+            corsConfig.setAllowedOrigins(List.of("http://localhost:5174"));
+            corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+            corsConfig.setAllowedHeaders(List.of("*"));
             corsConfig.setAllowCredentials(true);
             return corsConfig;
         }))
@@ -43,10 +44,11 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
 
             .requestMatchers("/carts/**").hasRole("USER")
             .requestMatchers("/orders/me/**").hasRole("USER")
-
-            .requestMatchers(HttpMethod.POST,   "/products/**","/images/**","/categories/**").hasRole("SELLER")
-            .requestMatchers(HttpMethod.PUT,    "/products/**","/images/**","/categories/**").hasRole("SELLER")
-            .requestMatchers(HttpMethod.DELETE, "/products/**","/images/**","/categories/**").hasRole("SELLER")
+            
+            .requestMatchers(HttpMethod.DELETE, "/products/**").hasAnyRole("SELLER", "ADMIN")
+            .requestMatchers(HttpMethod.POST, "/products/**","/images/**","/categories/**").hasRole("SELLER")
+            .requestMatchers(HttpMethod.PUT, "/products/**","/images/**","/categories/**").hasRole("SELLER")
+            .requestMatchers(HttpMethod.DELETE, "/images/**","/categories/**").hasRole("SELLER")
             .requestMatchers(HttpMethod.PUT, "/users/me").hasAnyRole("USER", "SELLER", "ADMIN")
             .requestMatchers(HttpMethod.POST, "/probador/**").hasRole("USER")
             .requestMatchers(HttpMethod.GET, "/users/**","/orders/admin/**").hasRole("ADMIN")

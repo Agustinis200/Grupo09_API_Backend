@@ -2,7 +2,6 @@ package com.uade.tpo.marketplace.service.product;
 import java.io.IOException;
 import java.sql.Blob;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Optional;
 
 import javax.sql.rowset.serial.SerialException;
@@ -159,8 +158,12 @@ public class ProductServiceImp implements ProductService {
 
     @Transactional
     public void deleteProduct(Long productId) {
-        if (!productRepository.existsById(productId)) {
+        Optional<Product> product = productRepository.findById(productId);
+        if (product.isEmpty()) {
             throw new ProductNotFoundException("Product not found: " + productId);
+        }
+        if (product.get().getImage() != null) {
+            imageRepository.delete(product.get().getImage());
         }
         productRepository.deleteById(productId);
     }

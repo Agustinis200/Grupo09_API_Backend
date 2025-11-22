@@ -32,12 +32,25 @@ public class CartMapper {
         Product product = item.getProduct();
         if (product == null) return null;
         
+        String productImageBase64 = null;
+        if (product.getImage() != null) {
+            try {
+                java.sql.Blob blob = product.getImage().getImage();
+                if (blob != null) {
+                    byte[] bytes = blob.getBytes(1, (int) blob.length());
+                    productImageBase64 = java.util.Base64.getEncoder().encodeToString(bytes);
+                }
+            } catch (Exception e) {
+                productImageBase64 = null;
+            }
+        }
+
         return ItemCartResponse.builder()
             .productId(product.getId())
             .productName(product.getName())
             .productPrice(product.getPrice())
             .productDiscount(product.getDiscount() != null ? product.getDiscount() : 1.0)
-            .productImage(product.getImage() != null ? "/images?id=" + product.getImage().getId() : null)
+            .productImage(productImageBase64)
             .quantity(item.getCount())
             .build();
     }
