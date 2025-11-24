@@ -39,6 +39,12 @@ public class ProductServiceImp implements ProductService {
     private CategoryService categoryService;
     
     @Autowired
+    private com.uade.tpo.marketplace.repository.ItemCartRepository itemCartRepository;
+    
+    @Autowired
+    private com.uade.tpo.marketplace.repository.ItemOrderRepository itemOrderRepository;
+    
+    @Autowired
     private ProductMapper productMapper;
 
     @Transactional(readOnly = true)
@@ -162,9 +168,21 @@ public class ProductServiceImp implements ProductService {
         if (product.isEmpty()) {
             throw new ProductNotFoundException("Product not found: " + productId);
         }
+        
+        // Verificar si el producto está en alguna orden
+        if (itemOrderRepository.existsByProductId(productId)) {
+            throw new RuntimeException("No se puede eliminar el producto porque está presente en órdenes existentes");
+        }
+        
+        // Eliminar items del carrito que referencian este producto
+        itemCartRepository.deleteByProductId(productId);
+        
+        // Eliminar imagen si existe
         if (product.get().getImage() != null) {
             imageRepository.delete(product.get().getImage());
         }
+        
+        // Finalmente eliminar el producto
         productRepository.deleteById(productId);
     }
 

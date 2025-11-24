@@ -21,4 +21,8 @@ public interface ItemCartRepository extends JpaRepository<ItemCart, Long> {
     @Modifying
     @Query("delete from ItemCart ic where ic.cart.id = :cartId")
     void deleteByCartId(@Param("cartId") Long cartId);
+
+    @Modifying
+    @Query("delete from ItemCart ic where ic.product.id = :productId")
+    void deleteByProductId(@Param("productId") Long productId);
 }
