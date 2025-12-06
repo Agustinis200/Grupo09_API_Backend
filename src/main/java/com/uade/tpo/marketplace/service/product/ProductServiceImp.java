@@ -22,6 +22,8 @@ import com.uade.tpo.marketplace.entity.Product;
 import com.uade.tpo.marketplace.entity.User;
 import com.uade.tpo.marketplace.mapper.ProductMapper;
 import com.uade.tpo.marketplace.repository.ImageRepository;
+import com.uade.tpo.marketplace.repository.ItemCartRepository;
+import com.uade.tpo.marketplace.repository.ItemOrderRepository;
 import com.uade.tpo.marketplace.repository.ProductRepository;
 import com.uade.tpo.marketplace.service.category.CategoryService;
 import com.uade.tpo.marketplace.exception.product.*;
@@ -39,10 +41,10 @@ public class ProductServiceImp implements ProductService {
     private CategoryService categoryService;
     
     @Autowired
-    private com.uade.tpo.marketplace.repository.ItemCartRepository itemCartRepository;
+    private ItemCartRepository itemCartRepository;
     
     @Autowired
-    private com.uade.tpo.marketplace.repository.ItemOrderRepository itemOrderRepository;
+    private ItemOrderRepository itemOrderRepository;
     
     @Autowired
     private ProductMapper productMapper;
@@ -171,7 +173,7 @@ public class ProductServiceImp implements ProductService {
         
         // Verificar si el producto está en alguna orden
         if (itemOrderRepository.existsByProductId(productId)) {
-            throw new RuntimeException("No se puede eliminar el producto porque está presente en órdenes existentes");
+            throw new ProductDeletionException("No se puede eliminar el producto porque está presente en órdenes existentes");
         }
         
         // Eliminar items del carrito que referencian este producto

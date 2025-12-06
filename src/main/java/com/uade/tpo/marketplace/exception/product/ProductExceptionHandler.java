@@ -40,4 +40,14 @@ public class ProductExceptionHandler {
         body.put("message", ex.getMessage() != null ? ex.getMessage() : "No hay stock suficiente para completar la operación");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
+
+    @ExceptionHandler(ProductDeletionException.class)
+    public ResponseEntity<Object> handleProductDeletion(ProductDeletionException ex) {
+        HashMap<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", 409);
+        body.put("error", "Conflict");
+        body.put("message", ex.getMessage() != null ? ex.getMessage() : "No se puede eliminar el producto debido a restricciones de integridad");
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+    }
 }
