@@ -47,7 +47,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
             
             .requestMatchers(HttpMethod.DELETE, "/products/**").hasAnyRole("SELLER", "ADMIN")
             .requestMatchers(HttpMethod.POST, "/products/**","/images/**","/categories/**").hasRole("SELLER")
-            .requestMatchers(HttpMethod.PUT, "/products/**","/images/**","/categories/**").hasRole("SELLER")
+            .requestMatchers(HttpMethod.PUT, "/products/**","/images/**","/categories/**").hasAnyRole("SELLER", "ADMIN")
             .requestMatchers(HttpMethod.DELETE, "/images/**","/categories/**").hasAnyRole("SELLER", "ADMIN")
             .requestMatchers(HttpMethod.PUT, "/users/me").hasAnyRole("USER", "SELLER", "ADMIN")
             .requestMatchers(HttpMethod.POST, "/probador/**").hasRole("USER")
